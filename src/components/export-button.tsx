@@ -33,14 +33,14 @@ export function ExportButton() {
       <DropdownMenuContent>
         <DropdownMenuItem
           onClick={() => {
-            const encodeUpdate = Y.encodeStateAsUpdate(yDoc);
+            const encodeUpdate = Y.encodeStateAsUpdateV2(yDoc);
             const blob = new Blob([encodeUpdate], {
               type: "application/octet-stream",
             });
             downloadFile(blob, "ydoc-update");
           }}
         >
-          encodeStateAsUpdate
+          encodeStateAsUpdateV2
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {

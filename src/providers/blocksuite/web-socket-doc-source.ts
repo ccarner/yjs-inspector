@@ -5,7 +5,7 @@
  */
 import type { DocSource } from "@blocksuite/sync";
 
-import { diffUpdate, encodeStateVectorFromUpdate, mergeUpdates } from "yjs";
+import { diffUpdateV2, encodeStateVectorFromUpdateV2, mergeUpdatesV2 } from "yjs";
 
 import type { WebSocketMessage } from "./types";
 import { assertExists } from "./utils";
@@ -35,7 +35,7 @@ export class WebSocketDocSource implements DocSource {
     const { docId, updates } = data.payload;
     const update = this.docMap.get(docId);
     if (update) {
-      this.docMap.set(docId, mergeUpdates([update, new Uint8Array(updates)]));
+      this.docMap.set(docId, mergeUpdatesV2([update, new Uint8Array(updates)]));
     } else {
       this.docMap.set(docId, new Uint8Array(updates));
     }
@@ -62,14 +62,14 @@ export class WebSocketDocSource implements DocSource {
     const update = this.docMap.get(docId);
     if (!update) return null;
 
-    const diff = state.length ? diffUpdate(update, state) : update;
-    return { data: diff, state: encodeStateVectorFromUpdate(update) };
+    const diff = state.length ? diffUpdateV2(update, state) : update;
+    return { data: diff, state: encodeStateVectorFromUpdateV2(update) };
   }
 
   push(docId: string, data: Uint8Array) {
     const update = this.docMap.get(docId);
     if (update) {
-      this.docMap.set(docId, mergeUpdates([update, data]));
+      this.docMap.set(docId, mergeUpdatesV2([update, data]));
     } else {
       this.docMap.set(docId, data);
     }

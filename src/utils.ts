@@ -26,8 +26,8 @@ export async function fileToYDoc(file: File) {
     try {
       const yDocUpdate = await decoder.decode(file);
       const newYDoc = new Y.Doc();
-      Y.applyUpdate(newYDoc, yDocUpdate);
-      Y.logUpdate(yDocUpdate);
+      Y.applyUpdateV2(newYDoc, yDocUpdate);
+      Y.logUpdateV2(yDocUpdate);
       return newYDoc;
     } catch (error) {
       console.warn(`Failed to decode ${decoder.name}`, error);
