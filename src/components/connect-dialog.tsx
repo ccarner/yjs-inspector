@@ -1,5 +1,6 @@
 import { BlocksuiteWebsocketProvider } from "@/providers/blocksuite/provider";
 import { WebSocketConnectProvider } from "@/providers/websocket";
+import { HocuspocusConnectProvider } from "@/providers/hocuspocus";
 import { RocketIcon, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import * as Y from "yjs";
@@ -138,6 +139,7 @@ export function ConnectDialog({
               <SelectGroup>
                 <SelectLabel>Customs</SelectLabel>
                 <SelectItem value="y-websocket">y-websocket</SelectItem>
+                <SelectItem value="hocuspocus">hocuspocus</SelectItem>
                 <SelectItem value="y-webrtc" disabled>
                   y-webrtc (coming soon)
                 </SelectItem>
@@ -242,11 +244,12 @@ export function ConnectDialog({
               return;
             }
 
-            const connectProvider = new WebSocketConnectProvider(
-              url,
-              room,
-              doc,
-            );
+            let connectProvider;
+            if (provider === "hocuspocus") {
+              connectProvider = new HocuspocusConnectProvider(url, room, doc);
+            } else {
+              connectProvider = new WebSocketConnectProvider(url, room, doc);
+            }
 
             onConnect(connectProvider);
           }}
