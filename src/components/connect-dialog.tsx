@@ -2,10 +2,10 @@ import { BlocksuiteWebsocketProvider } from "@/providers/blocksuite/provider";
 import { WebSocketConnectProvider } from "@/providers/websocket";
 import { HocuspocusConnectProvider } from "@/providers/hocuspocus";
 import { RocketIcon, TriangleAlert } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Y from "yjs";
 import { ConnectProvider } from "../providers/types";
-import { useYDoc } from "../state";
+import { useConfig, useYDoc, type Config as PlaygroundConfig } from "../state";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { Button } from "./ui/button";
 import {
@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Switch } from "./ui/switch";
+import { Config } from "tailwind-merge";
 
 // Hardcoded in the playground of blocksuite
 // See https://github.com/toeverything/blocksuite/blob/9203e1c39651e40d33b1d724ef0261bdcabf6ca8/packages/playground/apps/default/utils/collection.ts#L65
@@ -85,12 +86,28 @@ export function ConnectDialog({
 }: {
   onConnect: (provider: ConnectProvider) => void;
 }) {
+
+  const [config, setConfig] = useConfig();
+
+  useEffect(() =>{
+    setUrl(config.connectUrl)
+    setRoom(config.connectRoom)
+    setProvider(config.connectProvider)
+  }, [config])
+  
   const [yDoc, setYDoc] = useYDoc();
-  const [url, setUrl] = useState("wss://demos.yjs.dev/ws");
-  const [room, setRoom] = useState("quill-demo-2024/06");
-  const [provider, setProvider] = useState("Quill");
+  const [url, setUrl] = useState(config.connectUrl);
+  const [room, setRoom] = useState(config.connectRoom);
+  const [provider, setProvider] = useState(config.connectProvider);
   const [needCreateNewDoc, setNeedCreateNewDoc] = useState(true);
   const officialDemo = officialDemos.find((demo) => demo.name === provider);
+
+  const updateConfig = (key: keyof PlaygroundConfig, value: string) =>  {
+    setConfig({
+      ...config,
+      [key]: value,
+    })
+  }
 
   return (
     <DialogContent>
@@ -109,6 +126,7 @@ export function ConnectDialog({
           <Select
             value={provider}
             onValueChange={(value) => {
+              updateConfig('connectProvider', value)
               setProvider(value);
               const demo = officialDemos.find((demo) => demo.name === value);
               if (demo) {
@@ -162,7 +180,7 @@ export function ConnectDialog({
             id="url-input"
             value={url}
             disabled={!!officialDemo}
-            onInput={(e) => setUrl(e.currentTarget.value)}
+            onInput={(e) => {setUrl(e.currentTarget.value); updateConfig('connectUrl', e.currentTarget.value)}}
             placeholder="wss://demos.yjs.dev/ws"
             className="col-span-3"
           />
@@ -177,7 +195,7 @@ export function ConnectDialog({
             className="col-span-3"
             disabled={!!officialDemo && !officialDemo.custom}
             value={room}
-            onInput={(e) => setRoom(e.currentTarget.value)}
+            onInput={(e) => {setRoom(e.currentTarget.value); updateConfig('connectRoom', e.currentTarget.value)}}
             placeholder="Please enter a room name"
           />
         </div>

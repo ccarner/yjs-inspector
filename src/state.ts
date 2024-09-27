@@ -89,6 +89,9 @@ export type Config = {
   showDelta: boolean;
   showSize: boolean;
   editable: boolean;
+  connectUrl: string;
+  connectProvider: string;
+  connectRoom: string;
 };
 
 const defaultConfig = {
@@ -96,6 +99,9 @@ const defaultConfig = {
   showDelta: true,
   showSize: true,
   editable: false,
+  connectUrl: '',
+  connectProvider: '',
+  connectRoom: '',
 } satisfies Config;
 
 const configAtom = atomWithStorage<Config>(
