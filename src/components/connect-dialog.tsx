@@ -92,12 +92,14 @@ export function ConnectDialog({
   useEffect(() =>{
     setUrl(config.connectUrl)
     setRoom(config.connectRoom)
+    setToken(config.connectToken)
     setProvider(config.connectProvider)
   }, [config])
   
   const [yDoc, setYDoc] = useYDoc();
   const [url, setUrl] = useState(config.connectUrl);
   const [room, setRoom] = useState(config.connectRoom);
+  const [token, setToken] = useState(config.connectToken);
   const [provider, setProvider] = useState(config.connectProvider);
   const [needCreateNewDoc, setNeedCreateNewDoc] = useState(true);
   const officialDemo = officialDemos.find((demo) => demo.name === provider);
@@ -196,9 +198,25 @@ export function ConnectDialog({
             disabled={!!officialDemo && !officialDemo.custom}
             value={room}
             onInput={(e) => {setRoom(e.currentTarget.value); updateConfig('connectRoom', e.currentTarget.value)}}
-            placeholder="Please enter a room name"
+            placeholder={provider === 'hocuspocus' ? 'can get from playground/app.vue (hardcoded). eg 019966f6-0000-0000-0000-000000000001' : "Please enter a room name"}
           />
         </div>
+        
+        { provider === 'hocuspocus' &&
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="room-input" className="text-right">
+           Token 
+          </Label>
+          <Input
+            id="token-input"
+            className="col-span-3"
+            disabled={!!officialDemo && !officialDemo.custom}
+            value={token}
+            onInput={(e) => {setToken(e.currentTarget.value); updateConfig('connectToken', e.currentTarget.value)}}
+            placeholder="get token from `generate_playground_jwt.ts` script in playground frontend folder"
+          />
+        </div>
+        }
 
         <div className="grid grid-cols-4 items-center gap-4">
           <Switch
@@ -264,7 +282,7 @@ export function ConnectDialog({
 
             let connectProvider;
             if (provider === "hocuspocus") {
-              connectProvider = new HocuspocusConnectProvider(url, room, doc);
+              connectProvider = new HocuspocusConnectProvider(url, room, doc, token);
             } else {
               connectProvider = new WebSocketConnectProvider(url, room, doc);
             }

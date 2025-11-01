@@ -92,6 +92,7 @@ export type Config = {
   connectUrl: string;
   connectProvider: string;
   connectRoom: string;
+  connectToken: string,
 };
 
 const defaultConfig = {
@@ -102,6 +103,7 @@ const defaultConfig = {
   connectUrl: '',
   connectProvider: '',
   connectRoom: '',
+  connectToken: '',
 } satisfies Config;
 
 const configAtom = atomWithStorage<Config>(

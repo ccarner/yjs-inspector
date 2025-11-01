@@ -7,10 +7,11 @@ export class HocuspocusConnectProvider implements ConnectProvider {
   private provider: HocuspocusProvider;
   syncedPromise: Promise<void>
 
-  constructor(url: string, room: string, doc: Y.Doc) {
+  constructor(url: string, room: string, doc: Y.Doc, token?: string) {
     this.doc = doc;
     this.syncedPromise = new Promise((resolve) => {
         this.provider = new HocuspocusProvider({
+            token,
             url, 
             name: room, 
             document: doc,
