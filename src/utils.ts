@@ -26,8 +26,13 @@ export async function fileToYDoc(file: File) {
     try {
       const yDocUpdate = await decoder.decode(file);
       const newYDoc = new Y.Doc();
-      Y.applyUpdateV2(newYDoc, yDocUpdate);
-      Y.logUpdateV2(yDocUpdate);
+
+      // COLTON: editing to use original applyUpdate not v2
+      Y.applyUpdate(newYDoc, yDocUpdate)
+      Y.logUpdate(yDocUpdate)
+
+      // Y.applyUpdateV2(newYDoc, yDocUpdate);
+      // Y.logUpdateV2(yDocUpdate);
       return newYDoc;
     } catch (error) {
       console.warn(`Failed to decode ${decoder.name}`, error);
@@ -50,13 +55,13 @@ export function getPathValue<T = object, R = object>(
 
 export const and =
   <T extends (...args: any[]) => boolean>(...fnArray: NoInfer<T>[]) =>
-  (...args: Parameters<T>) =>
-    fnArray.every((fn) => fn(...args));
+    (...args: Parameters<T>) =>
+      fnArray.every((fn) => fn(...args));
 
 export const or =
   <T extends (...args: any[]) => boolean>(...fnArray: NoInfer<T>[]) =>
-  (...args: Parameters<T>) =>
-    fnArray.some((fn) => fn(...args));
+    (...args: Parameters<T>) =>
+      fnArray.some((fn) => fn(...args));
 
 export function getHumanReadablePath(path: Path) {
   return ["root", ...path].join(".");
